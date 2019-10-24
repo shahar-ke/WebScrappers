@@ -1,6 +1,8 @@
 import datetime
 import urllib.request
 from urllib.error import URLError, HTTPError, ContentTooShortError
+import argparse
+import smtplib
 
 
 def download(url):
@@ -38,15 +40,8 @@ EXPECTED = {
 }
 
 
-def get_password():
-    with open('./password') as password_file:
-        password = password_file.read()
-    return password.strip()
-
-
-def send_mail(email_msg):
+def send_mail(email_msg='', email_password=''):
     target_mail = 'deep_flame@yahoo.com'
-    import smtplib
     from_mail = target_mail
     # fun-fact: from is a keyword in python, you can't use it as variable, did anyone check if this code even works?
     to = target_mail
@@ -55,7 +50,7 @@ def send_mail(email_msg):
     message_text = email_msg
     msg = "From: %s\nTo: %s\nSubject: %s\nDate: %s\n\n%s" % (from_mail, to, subj, date, message_text)
     username = str(target_mail)
-    password = get_password()
+    password = email_password
     server = smtplib.SMTP("smtp.mail.yahoo.com", 587)
     server.starttls()
     server.login(username, password)
@@ -64,6 +59,10 @@ def send_mail(email_msg):
 
 
 def main():
+    e = ''
+    parser = argparse.ArgumentParser(description='parse ucpa special deals')
+    parser.add_argument('--e_pass', dest='e_password', required=True, help='email password', type=str)
+    args = parser.parse_args()
     email_msg = list()
     try:
         url = "https://www.action-outdoors.co.uk/winter/deals/special-offers"
@@ -89,8 +88,12 @@ def main():
         email_msg.append(str(e))
     if email_msg:
         email_msg.insert(0, 'pay attention !')
-        send_mail('\n'.join(email_msg))
+        msg = '\n'.join(email_msg)
+        send_mail(email_msg=msg, email_password=args.e_password)
+        print(msg)
         print('email sent')
+    if e:
+        raise e
 
 
 if __name__ == "__main__":
