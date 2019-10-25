@@ -16,27 +16,27 @@ def download(url):
 
 
 EXPECTED = {
-    'chamonix': 0,
-    'argentiere': 0,
-    'chalet-les-pelerins': 0,
+    'chamonix': 3,
+    'argentiere': 3,
+    'chalet-les-pelerins': 3,
     'Chalet Pelerins': 0,
-    'flaine': 0,
-    'la-plagne': 0,
+    'flaine': 4,
+    'la-plagne': 4,
     'La Plagne': 0,
-    'les-arcs': 0,
+    'les-arcs': 4,
     'Les Arcs': 0,
-    'les-contamines': 0,
+    'les-contamines': 4,
     'Les Contamines': 0,
-    'les-deux-alpes': 0,
+    'les-deux-alpes': 4,
     'Les Deux Alpes': 0,
-    'serre-chevalier': 0,
+    'serre-chevalier': 3,
     'Serre Chevalier': 0,
-    'Tignes': 0,
-    "val-d'isere": 0,
+    'Tignes': 3,
+    "val-d'isere": 1,
     "Val d'Isere": 0,
-    'val-thorens': 0,
+    'val-thorens': 4,
     "Val Thorens": 0,
-    'special': 0
+    'special': 11
 }
 
 
