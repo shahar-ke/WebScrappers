@@ -1,8 +1,10 @@
-import datetime
-import urllib.request
-from urllib.error import URLError, HTTPError, ContentTooShortError
 import argparse
+import datetime
+import logging
 import smtplib
+import urllib.request
+from logging.handlers import RotatingFileHandler
+from urllib.error import URLError, HTTPError, ContentTooShortError
 
 
 def download(url):
@@ -59,6 +61,17 @@ def send_mail(email_msg='', email_password=''):
 
 
 def main():
+    logger = logging.getLogger(__name__)
+    # Create handlers
+    s_handler = logging.StreamHandler()
+    f_handler = RotatingFileHandler('ucpa_scrapper.log', maxBytes=100000, backupCount=10)
+    formatter = logging.Formatter('%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+    s_handler.setFormatter(formatter)
+    f_handler.setFormatter(formatter)
+    logger.addHandler(s_handler)
+    logger.addHandler(f_handler)
+    logger.setLevel(logging.DEBUG)
+    logger.info('program start')
     e = ''
     parser = argparse.ArgumentParser(description='parse ucpa special deals')
     parser.add_argument('--e_pass', dest='e_password', required=True, help='email password', type=str)
@@ -66,26 +79,36 @@ def main():
     email_msg = list()
     try:
         url = "https://www.action-outdoors.co.uk/winter/deals/special-offers"
+        logger.info('fetching info from %s' % (url,))
         page = download(url)
         page = page.decode("utf-8")
         assert isinstance(page, str)
         found = dict()
         for key in EXPECTED:
             found[key] = 0
+        lines = 0
         for line in page.splitlines():
+            lines += 1
             line = line.strip()
             if not line:
                 continue
             for key in sorted(EXPECTED.keys()):
                 if key.lower() in line:
                     found[key] += 1
+        logger.info('parsed %d lines' % (lines,))
         for key in sorted(EXPECTED.keys()):
             if found[key] != EXPECTED[key]:
-                email_msg.append("%s, expected:%d, found:%d" % (key, EXPECTED[key], found[key]))
+                msg = "%s, expected:%d, found:%d" % (key, EXPECTED[key], found[key])
+                email_msg.append(msg)
+                logger.info(msg)
     except Exception as e:
         email_msg.clear()
-        email_msg.append('exception was thrown')
-        email_msg.append(str(e))
+        err_msg = 'exception was thrown'
+        email_msg.append(err_msg)
+        logger.error(err_msg)
+        exep_msg = str(e)
+        email_msg.append(exep_msg)
+        logger.error(exep_msg)
     if email_msg:
         email_msg.insert(0, 'pay attention !')
         msg = '\n'.join(email_msg)
@@ -93,7 +116,9 @@ def main():
         print(msg)
         print('email sent')
     if e:
+        logger.error('raising exception')
         raise e
+    logger.info('gracefully done :)')
 
 
 if __name__ == "__main__":

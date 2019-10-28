@@ -1,3 +1,4 @@
 .idea/
 venv/
 ucpa_scrapper/password
+ucpa_scrapper.log
