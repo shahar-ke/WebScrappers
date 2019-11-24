@@ -38,7 +38,8 @@ EXPECTED = {
     "Val d'Isere": 0,
     'val-thorens': 4,
     "Val Thorens": 0,
-    'special': 11
+    'special': 11,
+    'lines': 3029
 }
 
 
@@ -96,6 +97,7 @@ def main():
                 if key.lower() in line:
                     found[key] += 1
         logger.info('parsed %d lines' % (lines,))
+        found['lines'] = lines
         for key in sorted(EXPECTED.keys()):
             if found[key] != EXPECTED[key]:
                 msg = "%s, expected:%d, found:%d" % (key, EXPECTED[key], found[key])
