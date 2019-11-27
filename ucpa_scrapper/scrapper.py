@@ -39,7 +39,7 @@ EXPECTED = {
     'val-thorens': 4,
     "Val Thorens": 0,
     'special': 11,
-    'lines': 3029
+    'lines': 3017
 }
 
 
